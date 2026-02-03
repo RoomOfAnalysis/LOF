@@ -25,7 +25,6 @@ function(addTest name)
     add_executable(${name} ${SRC_DIR}/${name}.cpp)
     target_include_directories(${name}
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
-	    PRIVATE ${XTENSOR_FFTW_INCLUDE_DIRS}
     )
     target_link_libraries(${name}
         PRIVATE ${OpenCV_LIBS}

@@ -1,4 +1,5 @@
 #include "lof.hpp"
+#include "utils.hpp"
 #include <argparse/argparse.hpp>
 #include <filesystem>
 #include <fstream>
@@ -8,7 +9,7 @@ int main(int argc, char* argv[])
     using namespace LOF;
     using namespace LOF::utils;
 
-    argparse::ArgumentParser program("chi2_shift_test");
+    argparse::ArgumentParser program("lof_test");
     program.add_argument("--dataset").help("Path to dataset").required().metavar("FILE");
     try
     {

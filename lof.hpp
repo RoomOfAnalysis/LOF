@@ -7,8 +7,6 @@
 #include <algorithm>
 #include <cmath>
 
-#include "utils.hpp"
-
 namespace LOF
 {
     /**
@@ -45,29 +43,24 @@ namespace LOF
 
             // Adjust n_neighbors if it's greater than the number of samples
             int effective_n_neighbors = std::max(1, std::min(n_neighbors_, n_samples_fit_ - 1));
-            //std::println("effective_n_neighbors: {}", effective_n_neighbors);
 
             // Precompute all k-nearest neighbors using FLANN
             neighbors_indices_and_dists_fit_x_ = find_all_k_nearest_neighbors_flann(X, effective_n_neighbors);
-            //std::println("neighbors_indices_and_dists_fit_x_: {}", neighbors_indices_and_dists_fit_x_);
 
             auto const& [indices, dists] = neighbors_indices_and_dists_fit_x_;
 
             // Calculate local reachability density for all points
             lrd_ = local_reachability_density(indices, dists, n_neighbors_);
-            //std::println("lrd_: {}", lrd_);
 
             cv::Mat lrd_ratios_array = cv::Mat::zeros(dists.rows, dists.cols, dists.type());
             for (auto r = 0; r < dists.rows; ++r)
                 for (auto c = 0; c < dists.cols; ++c)
                     lrd_ratios_array.at<float>(r, c) = lrd_.at<float>(indices.at<int>(r, c), 0) / lrd_.at<float>(r, 0);
-            //std::println("lrd_ratios_array: {}", lrd_ratios_array);
 
             // Calculate LOF scores
             cv::Mat negative_outlier_factor_mat;
             cv::reduce(lrd_ratios_array, negative_outlier_factor_mat, 1, cv::REDUCE_AVG, lrd_.type());
             negative_outlier_factor_mat *= -1.0;
-            //std::println("negative_outlier_factor_mat: {}", negative_outlier_factor_mat);
 
             negative_outlier_factor_mat.col(0).copyTo(negative_outlier_factor_);
 
@@ -116,8 +109,7 @@ namespace LOF
          */
         float get_offset() const { return offset_; }
 
-
-        private:
+    private:
         /**
      * Precompute all k-nearest neighbors using FLANN
      */
@@ -138,9 +130,6 @@ namespace LOF
 
             cv::sqrt(dists, dists);
 
-            //std::println("indices: {}", indices);
-            //std::println("dists: {}", dists);
-
             return std::make_pair(indices, dists);
         }
 
@@ -153,7 +142,6 @@ namespace LOF
             for (auto r = 0; r < indices.rows; ++r)
                 for (auto c = 0; c < indices.cols; ++c)
                     dist_k.at<float>(r, c) = dists.at<float>(indices.at<int>(r, c), k - 1);
-            //std::println("dist_k: {}", dist_k);
             cv::max(dists, dist_k, dist_k);
             cv::Mat mean;
             cv::reduce(dist_k, mean, 1, cv::REDUCE_AVG, dist_k.type());
